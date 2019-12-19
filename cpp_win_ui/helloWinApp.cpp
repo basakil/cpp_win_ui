@@ -69,7 +69,7 @@ int CALLBACK WinMain(
         szTitle,
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT,
-        500, 100,
+        500, 200,
         NULL,
         NULL,
         hInstance,
@@ -85,6 +85,19 @@ int CALLBACK WinMain(
 
         return 1;
     }
+
+    HWND hwndButton = CreateWindow(
+        L"BUTTON",  // Predefined class; Unicode assumed 
+        L"EXIT",      // Button text 
+        WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,  // Styles 
+        10,         // x position 
+        50,         // y position 
+        100,        // Button width
+        35,        // Button height
+        hWnd,     // Parent window
+        NULL,       // No menu.
+        (HINSTANCE)GetWindowLong(hWnd, 0),
+        NULL);      // Pointer not needed.
 
     // The parameters to ShowWindow explained:
     // hWnd: the value returned from CreateWindow
@@ -133,6 +146,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     case WM_DESTROY:
         PostQuitMessage(0);
+        break;
+    //case WM_CLOSE:
+    //    {
+    //        if (MessageBox(hWnd, L"Do you want to exit?", L"EXIT", MB_OKCANCEL) == IDOK)
+    //            DestroyWindow(hWnd);
+    //        return 0;
+    //    }
+    //    break;
+    case WM_COMMAND:
+        switch (HIWORD(wParam)) {
+            case BN_CLICKED:
+                if (MessageBox(hWnd, L"Do you want to exit?", L"EXIT", MB_OKCANCEL | MB_ICONQUESTION) == IDOK)
+                    DestroyWindow(hWnd);
+                return 0;
+                break;
+            default:
+                break;
+        }
         break;
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
